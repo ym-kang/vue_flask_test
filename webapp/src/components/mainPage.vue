@@ -3,13 +3,15 @@
     <h2>Log In</h2>
     <form @submit="onSubmit">
       <input placeholder="Enter your ID" v-model="uid">
-      <input type="Enter your password" v-model="password">
+      <input placeholder="Enter your password" v-model="password">
       <button type="submit">Login</button>
     </form>
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex' // mapGetters를 추가한다
+
 export default {
   name: 'HelloWorld',
   data () {
@@ -20,6 +22,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['login']),
     async onSubmit () {
       try {
         let loginResult = await this.login({uid: this.uid, password: this.password})

@@ -8,20 +8,13 @@ Vue.use(Router)
 Vue.use(Vuex)
 
 
-const store = new Vuex.Store({
-  state:{
-    count:0
-  }
-})
-
 
 export default new Router({
   routes: [
     {
       path: '/',
       name: 'mainPage',
-      component: mainPage,
-      store
+      component: mainPage
     }
   ]
 })
