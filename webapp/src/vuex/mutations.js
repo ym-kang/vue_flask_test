@@ -10,5 +10,8 @@ export default {
   },
   [types.IS_AUTH] (state, isAuth) {
     state.isAuth = isAuth
+  },
+  setCurComponent(state,comp){
+    state.currentComponent = comp;
   }
 }

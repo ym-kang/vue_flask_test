@@ -1,13 +1,17 @@
 <template>
   <div id="app">
     <div>KYM Toy proj</div>
-    <router-view/>
+    <!-- <router-view/> -->
+
+    
+    <component :is=" this.$store.state.currentComponent"></component>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+
 }
 </script>
 

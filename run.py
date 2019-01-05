@@ -6,6 +6,7 @@ from flask_jwt_extended import(
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'localhost'
@@ -15,6 +16,9 @@ jwt = JWTManager(app)
 api = Api(app, version='1.0', title='Sample API',
     description='A sample API',
 )
+cors = CORS(app,resources={
+    "*":{"origin":"*"}
+})
 #db = SQLAlchemy(app)
 
 
@@ -30,10 +34,17 @@ class MyResource(Resource):
     def post(self, id):
         api.abort(403)
 
+@api.route('/test')
+class Test(Resource):
+    def get(self):
+        args = request.args
+        print(args['uid'])
+        return args['uid']
 
 @api.route('/hello')
 class HelloWorld(Resource):
     def get(self):
+
         return{'hello':'world'}
 
 @api.route('/login',methods=['POST'])
