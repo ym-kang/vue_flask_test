@@ -10,7 +10,7 @@
         <input class="form-control" type="password" placeholder="Enter your password" v-model="password">
       </div>
       
-      <b-button type="submit">Login</b-button>
+      <b-button class="btn" variant="primary" type="submit">Login</b-button>
       
       
     </form>
@@ -73,5 +73,8 @@ li {
 }
 a {
   color: #42b983;
+}
+.form-group{
+  margin: 10px;
 }
 </style>
