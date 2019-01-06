@@ -2,5 +2,6 @@
 export default {
     getUid: state => state.uid,
     getErrorState: state => state.errorState,
-    getIsAuth: state => state.isAuth
+    getIsAuth: state => state.auth.isAuth,
+    getToken: state => state.auth.accessToken,
   }

@@ -8,6 +8,7 @@ export default {
       return loginResponse
     } catch (err) {
       console.error(err)
+      return false;
     }
   }
 }

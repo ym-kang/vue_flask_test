@@ -9,9 +9,13 @@ export default {
     state.errorState = errorState
   },
   [types.IS_AUTH] (state, isAuth) {
-    state.isAuth = isAuth
+    state.auth.isAuth = isAuth
   },
   setCurComponent(state,comp){
     state.currentComponent = comp;
+  },
+  accessToken(state,token){
+    state.auth.accessToken = token;
+    
   }
 }

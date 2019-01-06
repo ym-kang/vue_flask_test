@@ -4,7 +4,9 @@ import mainPage from "../components/mainPage"
 let setUID = ({commit}, data) => {
   commit(UID, data)
 }
-
+let setToken=({commit},data)=>{
+  commit("accessToken",data)
+}
 let setErrorState = ({commit}, data) => {
   commit(ERROR_STATE, data)
 }
@@ -26,7 +28,7 @@ let processResponse = (store, loginResponse) => {
       break
     default:
       
-      setUID(store, loginResponse.UID)
+      setToken(store, loginResponse.access_token)
       setErrorState(store, '')
       setIsAuth(store, true)
   }
@@ -35,10 +37,15 @@ let processResponse = (store, loginResponse) => {
 export default {
   async login (store, {uid, password}) {
     
-    let loginResponse = await api.login(uid, password)
-    console.log("a")
-    processResponse(store, loginResponse)
-    return store.getters.getIsAuth  // 로그인 결과를 리턴한다
+    try {
+      let loginResponse = await api.login(uid, password)
+      if(loginResponse!=undefined)processResponse(store, loginResponse)
+      return store.getters.getIsAuth  // 로그인 결과를 리턴한다  
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+    
   },
   gotoMain(store){
     console.log("gotoMain")

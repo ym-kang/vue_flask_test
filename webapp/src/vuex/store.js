@@ -12,8 +12,14 @@ Vue.use(Vuex)
 const state = {
   uid: '',
   errorState: '',
-  isAuth: false,
+  
   currentComponent:loginPage,
+  auth: {
+    accessToken:undefined,
+    time:undefined,
+    isAuth:false
+  }
+  
 }
 
 export default new Vuex.Store({

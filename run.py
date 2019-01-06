@@ -10,7 +10,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'localhost'
-app.config['JWT_SECRET_KEY'] = 'super-secret'
+app.config['JWT_SECRET_KEY'] = 'qara-management-jwt-secretkey-topsecret'
 jwt = JWTManager(app)
 
 api = Api(app, version='1.0', title='Sample API',
@@ -21,6 +21,12 @@ cors = CORS(app,resources={
 })
 #db = SQLAlchemy(app)
 
+def print_response(response):
+    print("====response====")
+    print(response.status)
+    print(response.headers)
+    print(response.get_data())
+    print("================")
 
 @api.route('/my-resource/<id>')
 @api.doc(params={'id': 'An ID'})
@@ -34,20 +40,26 @@ class MyResource(Resource):
     def post(self, id):
         api.abort(403)
 
-@api.route('/test')
+@api.route('/api/test')
 class Test(Resource):
     def get(self):
         args = request.args
         print(args['uid'])
         return args['uid']
 
-@api.route('/hello')
+
+
+@api.route('/api/hello')
 class HelloWorld(Resource):
+    @jwt_required
     def get(self):
-
-        return{'hello':'world'}
-
-@api.route('/login',methods=['POST'])
+        response = jsonify({'hello':'world'})
+        response.status_code = 200 
+        
+        current_user = get_jwt_identity()
+        print(current_user)
+        return response
+@api.route('/api/login',methods=['POST'])
 class Login(Resource):
 
     @api.response(200,'ok')
