@@ -1,10 +1,10 @@
 <template>
   <div class="hello">
     <h2>Log In1</h2>
-    <form >
+    <form @submit.prevent="onSubmit">
       <input placeholder="Enter your ID" v-model="uid">
-      <input placeholder="Enter your password" v-model="password">
-      <button v-on:click="onSubmit">Login</button>
+      <input type="password" placeholder="Enter your password" v-model="password">
+      <button >Login</button>
     </form>
   </div>
 </template>
@@ -27,16 +27,20 @@ export default {
       try { 
         let loginResult;
         let ret = this.login({uid: this.uid, password: this.password})
+        setTimeout(() => {
+          
+        }, 1000);
         ret.then((val)=>{
             loginResult = val;
             console.log("rval:"+loginResult) // 로그인 성공하면 true, 아니면 false
             if(!loginResult){//login failure
               alert("login fail") 
             }else{
+           // alert("login success") 
             this.gotoMain();
           }
           });
-        
+        this.password = "";
         
       } catch (err) {
         console.error(err)
