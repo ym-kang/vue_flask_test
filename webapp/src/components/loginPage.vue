@@ -1,10 +1,18 @@
 <template>
   <div class="hello">
     <h2>Log In1</h2>
-    <form @submit.prevent="onSubmit">
-      <input placeholder="Enter your ID" v-model="uid">
-      <input type="password" placeholder="Enter your password" v-model="password">
-      <button >Login</button>
+    <form class="form-horizontal" @submit.prevent="onSubmit">
+     
+      <div class="form-group">
+        <input class="form-control" placeholder="Enter your ID" v-model="uid">  
+      </div>
+      <div class="form-group">
+        <input class="form-control" type="password" placeholder="Enter your password" v-model="password">
+      </div>
+      
+      <b-button type="submit">Login</b-button>
+      
+      
     </form>
   </div>
 </template>
