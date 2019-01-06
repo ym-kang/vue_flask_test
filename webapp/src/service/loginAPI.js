@@ -1,29 +1,29 @@
 // src/sercice/loginAPI.js
 import axios from 'axios'
 let backEnd = 'http://127.0.0.1:5000/api'
-var config = { headers: {  
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-}}
-export function updateToken(token){
-  config['Authorization'] ='Bearer '+ token;
+
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+
+
+function updateToken(token){
+  axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
+  //config['Authorization'] ='Bearer '+ token;
 }
 const getUserInfo = (uid, password) => {
   return axios.post(backEnd+'/login', {
       'username': uid,
       'password': password
-  },config)
+  })
 }
 const testToken = ()=>{
-  return axios.get(backEnd+'/hello',{
-
-  })
+  return axios.get(backEnd+'/hello');
 }
 const isFinished = uid => {
   return axios.get(backEnd+'/test',{ 
     params:{
       'uid': uid
-  }},config)
+  }})
 }
 
 export default {
@@ -41,5 +41,7 @@ export default {
       console.error(err)
       return 'noAuth';
     }
-  }
+  },
+  updateToken,
+  testToken
 }

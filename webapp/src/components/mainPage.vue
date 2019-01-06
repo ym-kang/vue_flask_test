@@ -9,6 +9,10 @@
         </div>
         
         <button v-on:click="onclick">increase</button>
+        <div>
+            <b-button varient="primary" @click="testTokenUI">test token</b-button>
+            <p>{{response}}</p>
+        </div>
     </div>
     
 </template>
@@ -20,13 +24,20 @@ export default {
     name:"mainPage",
     data(){
         return {
-            abc:1
+            abc:1,
+            response:"none"
         }
     },
     methods:{
+        ...mapActions(['testToken']),
         onclick(event){ 
             this.abc++;
-        }
+        },
+        testTokenUI(event){
+            console.log(1)
+            this.testToken().then((data)=>this.response = data);
+        },
+
     }
 
 }

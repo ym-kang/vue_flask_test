@@ -1,6 +1,7 @@
 // src/service/index.js
 import loginAPI from './loginAPI'
 
+
 export default {
   async login (uid, password) {
     try {
@@ -10,5 +11,6 @@ export default {
       console.error(err)
       return false;
     }
-  }
+  },
+  loginAPI
 }

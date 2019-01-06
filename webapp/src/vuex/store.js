@@ -11,8 +11,7 @@ Vue.use(Vuex)
 
 const state = {
   uid: '',
-  errorState: '',
-  
+  errorState: '',  
   currentComponent:loginPage,
   auth: {
     accessToken:undefined,

@@ -1,10 +1,12 @@
 import {UID, IS_AUTH, ERROR_STATE} from './mutation_types'
 import api from '../service'
 import mainPage from "../components/mainPage"
+import loginAPI from '../service/loginAPI';
 let setUID = ({commit}, data) => {
   commit(UID, data)
 }
 let setToken=({commit},data)=>{
+  
   commit("accessToken",data)
 }
 let setErrorState = ({commit}, data) => {
@@ -27,7 +29,7 @@ let processResponse = (store, loginResponse) => {
       setIsAuth(store, false)
       break
     default:
-      
+      api.loginAPI.updateToken(loginResponse.access_token)
       setToken(store, loginResponse.access_token)
       setErrorState(store, '')
       setIsAuth(store, true)
@@ -50,5 +52,9 @@ export default {
   gotoMain(store){
     console.log("gotoMain")
     store.commit("setCurComponent",mainPage)
+  },
+  testToken(store){
+    console.log("a")
+    return loginAPI.testToken();
   }
 } 
