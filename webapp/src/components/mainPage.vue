@@ -12,7 +12,7 @@
         
         <button v-on:click="onclick">increase</button>
         <div>
-            <b-button varient="primary" @click="testTokenUI">test token</b-button>
+            <b-button varient="primary" @click="testTokenUI">secure</b-button>
             <p>{{response}}</p>
         </div>
         <div>

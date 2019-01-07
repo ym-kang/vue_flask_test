@@ -7,6 +7,7 @@ from flask_jwt_extended import(
     get_jwt_identity,jwt_refresh_token_required, create_refresh_token
 )
 from flask_cors import CORS
+import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'localhost'
@@ -66,6 +67,8 @@ class HelloWorld(Resource):
         return response
 
 
+expire_delta_token = datetime.timedelta(minutes=60)
+expire_delta_refresh_token = datetime.timedelta(days=14)
 
 
 @api_ns_JWT.route('/api/login')
@@ -80,8 +83,7 @@ class Login(Resource):
         'valid':fields.Boolean(description='valid'),
         'msg':fields.String(description='message')
     })
-
-   
+    
     @api.response(400,'missing parameter')
     @api.response(401,'bad request')
     @api.expect(model_login_request)
@@ -109,8 +111,8 @@ class Login(Resource):
 
         # Identity can be any data that is json serializable
         
-        access_token = create_access_token(identity=username)
-        refresh_token = create_refresh_token(identity=username)
+        access_token = create_access_token(identity=username,fresh=True,expires_delta=expire_delta_token)
+        refresh_token = create_refresh_token(identity=username,expires_delta=expire_delta_refresh_token)
         body['access_token']= access_token
         body['refresh_token']=refresh_token
         body['valid']=True
@@ -129,7 +131,7 @@ class Refresh(Resource):
     def get(self):
         current_user = get_jwt_identity()
         body = {
-            'access_token':create_access_token(identity = current_user),
+            'access_token':create_access_token(identity = current_user,expires_delta=expire_delta_token),
             'valid':True
         }
         return body,200
