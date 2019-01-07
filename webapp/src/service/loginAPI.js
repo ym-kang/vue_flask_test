@@ -1,6 +1,6 @@
 // src/sercice/loginAPI.js
 import axios from 'axios'
-let backEnd = 'http://127.0.0.1:5000/api'
+let backEnd = 'http://127.0.0.1:5000/'
 
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
@@ -11,16 +11,16 @@ function updateToken(token){
   //config['Authorization'] ='Bearer '+ token;
 }
 const getUserInfo = (uid, password) => {
-  return axios.post(backEnd+'/login', {
+  return axios.post(backEnd+'JWT/api/login', {
       'username': uid,
       'password': password
   })
 }
 const testToken = ()=>{
-  return axios.get(backEnd+'/hello');
+  return axios.get(backEnd+'Secure/api/hello');
 }
 const isFinished = uid => {
-  return axios.get(backEnd+'/test',{ 
+  return axios.get(backEnd+'api/test',{ 
     params:{
       'uid': uid
   }})

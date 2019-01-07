@@ -17,7 +17,7 @@ api = Api(app, version='1.0', title='Sample API',
     description='A sample API',
 )
 
-api_ns_JWS = api.namespace('JWS',description='JWS auth')
+api_ns_JWT = api.namespace('JWT',description='JWS auth')
 api_ns_TEST = api.namespace('TEST',description='Test namespace')
 api_ns_Secure = api.namespace('Secure',description='Token required area')
 
@@ -65,14 +65,15 @@ class HelloWorld(Resource):
         print(current_user)
         return response
 
-model_login = api.model('Login',{
+
+
+
+@api_ns_JWT.route('/api/login',methods=['POST'])
+class Login(Resource):
+    model_login = api.model('Login',{
     'username':fields.String(description='user name'),
     'password':fields.String(description='user password')
-})
-
-
-@api_ns_JWS.route('/api/login',methods=['POST'])
-class Login(Resource):
+    })
 
     @api.response(200,'ok')
     @api.response(400,'err')
@@ -104,16 +105,14 @@ class Login(Resource):
         # Identity can be any data that is json serializable
         
         access_token = create_access_token(identity=username)
+        
         response = jsonify(access_token=access_token)
         response.status_code = 200
         
         return response
 
 
-model_todo = api.model('Todo', {
-    'id': fields.Integer(readOnly=True, description='The task unique identifier'),
-    'task': fields.String(required=True, description='The task details')
-})
+
 
 
 class TodoDAO(object):
@@ -150,6 +149,11 @@ DAO.create({'task': 'profit!'})
 
 @api.route('/todo')
 class TodoList(Resource):
+    model_todo = api.model('Todo', {
+    'id': fields.Integer(readOnly=True, description='The task unique identifier'),
+    'task': fields.String(required=True, description='The task details')
+    })
+
     @api.doc('list_todos~~~!!!')
     @api.marshal_list_with(model_todo)
     def get(self):
@@ -162,6 +166,27 @@ class TodoList(Resource):
         '''Create a new task'''
         r  =  DAO.create(api.payload)        
         return r, 201
+    
+import random
+@api.route('/todoDAO',endpoint='dao')
+class TodoD(Resource):
+
+    class RandomNumber(fields.Raw):
+        def output(self,key,obj):
+            
+            r = random.Random()
+            r = r.random()
+            print(r)
+            return r
+
+    test_model = api.model('Model',{
+    'counter':fields.String,
+    'todos':fields.List(fields.Nested(TodoList.model_todo)),   
+    'uri':fields.Url("dao")
+    })
+    @api.marshal_with(test_model)
+    def get(self):
+        return DAO, 201
 
 
 if __name__ == '__main__':
