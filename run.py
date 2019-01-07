@@ -1,5 +1,5 @@
 from flask import Flask,request,jsonify
-from flask_restplus import Api, Resource, fields,Namespace
+from flask_restplus import Api, Resource, fields,Namespace,marshal
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import(
@@ -16,6 +16,11 @@ jwt = JWTManager(app)
 api = Api(app, version='1.0', title='Sample API',
     description='A sample API',
 )
+
+api_ns_JWS = api.namespace('JWS',description='JWS auth')
+api_ns_TEST = api.namespace('TEST',description='Test namespace')
+api_ns_Secure = api.namespace('Secure',description='Token required area')
+
 cors = CORS(app,resources={
     "*":{"origin":"*"}
 })
@@ -49,7 +54,7 @@ class Test(Resource):
 
 
 
-@api.route('/api/hello')
+@api_ns_Secure.route('/api/hello')
 class HelloWorld(Resource):
     @jwt_required
     def get(self):
@@ -59,12 +64,20 @@ class HelloWorld(Resource):
         current_user = get_jwt_identity()
         print(current_user)
         return response
-@api.route('/api/login',methods=['POST'])
+
+model_login = api.model('Login',{
+    'username':fields.String(description='user name'),
+    'password':fields.String(description='user password')
+})
+
+
+@api_ns_JWS.route('/api/login',methods=['POST'])
 class Login(Resource):
 
     @api.response(200,'ok')
     @api.response(400,'err')
     @api.response(401,'err')
+    @api.expect(model_login)
     def post(self):
         if not request.is_json:
             
@@ -96,6 +109,59 @@ class Login(Resource):
         
         return response
 
+
+model_todo = api.model('Todo', {
+    'id': fields.Integer(readOnly=True, description='The task unique identifier'),
+    'task': fields.String(required=True, description='The task details')
+})
+
+
+class TodoDAO(object):
+    def __init__(self):
+        self.counter = 0
+        self.todos = []
+
+    def get(self, id):
+        for todo in self.todos:
+            if todo['id'] == id:
+                return todo
+        api.abort(404, "Todo {} doesn't exist".format(id))
+
+    def create(self, data):
+        todo = data
+        todo['id'] = self.counter = self.counter + 1
+        self.todos.append(todo)
+        return todo
+
+    def update(self, id, data):
+        todo = self.get(id)
+        todo.update(data)
+        return todo
+
+    def delete(self, id):
+        todo = self.get(id)
+        self.todos.remove(todo)
+
+
+DAO = TodoDAO()
+DAO.create({'task': 'Build an API'})
+DAO.create({'task': '?????'})
+DAO.create({'task': 'profit!'})
+
+@api.route('/todo')
+class TodoList(Resource):
+    @api.doc('list_todos~~~!!!')
+    @api.marshal_list_with(model_todo)
+    def get(self):
+        return DAO.todos
+    
+    @api.doc('create_todo')
+    @api.expect(model_todo)
+    @api.marshal_with(model_todo, code=201)
+    def post(self):
+        '''Create a new task'''
+        r  =  DAO.create(api.payload)        
+        return r, 201
 
 
 if __name__ == '__main__':
