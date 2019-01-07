@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import(
     JWTManager, jwt_required, create_access_token,
-    get_jwt_identity
+    get_jwt_identity,jwt_refresh_token_required, create_refresh_token
 )
 from flask_cors import CORS
 
@@ -68,17 +68,24 @@ class HelloWorld(Resource):
 
 
 
-@api_ns_JWT.route('/api/login',methods=['POST'])
+@api_ns_JWT.route('/api/login')
 class Login(Resource):
-    model_login = api.model('Login',{
+    model_login_request = api.model('Login',{
     'username':fields.String(description='user name'),
     'password':fields.String(description='user password')
     })
+    model_login_response = api.model('User JWT',{
+        'access_token':fields.String(description='access token'),
+        'refresh_token':fields.String(description='refresh token'),
+        'valid':fields.Boolean(description='valid'),
+        'msg':fields.String(description='message')
+    })
 
-    @api.response(200,'ok')
-    @api.response(400,'err')
-    @api.response(401,'err')
-    @api.expect(model_login)
+   
+    @api.response(400,'missing parameter')
+    @api.response(401,'bad request')
+    @api.expect(model_login_request)
+    @api.marshal_with(model_login_response,200)
     def post(self):
         if not request.is_json:
             
@@ -87,31 +94,45 @@ class Login(Resource):
         username = request.json.get('username', None)
         password = request.json.get('password', None)
         
+        body = {'valid':False}
         
         if not username:
-            response = jsonify({"msg": "Missing username parameter"})
-            response.status_code = 400
-            return response
+            body["msg"] = "Missing username parameter"
+            return body,400
         if not password:
-            response = jsonify({"msg": "Missing password parameter"})
-            response.status_code = 400
-            return response
+            body["msg"] = "Missing password parameter"
+            return body,400
 
         if username != 'test' or password != 'test':
-            response = jsonify({"msg": "Bad username or password"})
-            response.status_code = 401
-            return response
+            body["msg"] = "Bad username or password"
+            return body,401
 
         # Identity can be any data that is json serializable
         
         access_token = create_access_token(identity=username)
+        refresh_token = create_refresh_token(identity=username)
+        body['access_token']= access_token
+        body['refresh_token']=refresh_token
+        body['valid']=True
         
-        response = jsonify(access_token=access_token)
-        response.status_code = 200
-        
-        return response
+        return body,200
 
+@api_ns_JWT.route('/api/refresh')
+class Refresh(Resource):
+    model_refresh_token_response = api.model("Token Refresh",{
+        "access_token":fields.String("refreshed token"),
+        "valid":fields.Boolean("success or not")
+    })
 
+    @jwt_refresh_token_required
+    @api.marshal_with(model_refresh_token_response,200)
+    def get(self):
+        current_user = get_jwt_identity()
+        body = {
+            'access_token':create_access_token(identity = current_user),
+            'valid':True
+        }
+        return body,200
 
 
 

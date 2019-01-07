@@ -16,6 +16,8 @@ export default {
   },
   accessToken(state,token){
     state.auth.accessToken = token;
-    
+  },
+  refreshToken(state,token){
+    state.auth.refreshToken = token;
   }
 }

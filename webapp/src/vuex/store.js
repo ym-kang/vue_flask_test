@@ -15,6 +15,7 @@ const state = {
   currentComponent:loginPage,
   auth: {
     accessToken:undefined,
+    refreshToken:undefined,
     time:undefined,
     isAuth:false
   }

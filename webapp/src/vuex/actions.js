@@ -6,8 +6,10 @@ let setUID = ({commit}, data) => {
   commit(UID, data)
 }
 let setToken=({commit},data)=>{
-  
   commit("accessToken",data)
+}
+let setRefreshToken=({commit},data)=>{
+  commit("refreshToken",data)
 }
 let setErrorState = ({commit}, data) => {
   commit(ERROR_STATE, data)
@@ -31,8 +33,9 @@ let processResponse = (store, loginResponse) => {
     default:
       api.loginAPI.updateToken(loginResponse.access_token)
       setToken(store, loginResponse.access_token)
+      setRefreshToken(store,loginResponse.refresh_token)
       setErrorState(store, '')
-      setIsAuth(store, true)
+      setIsAuth(store, true) 
   }
 }
 
@@ -50,11 +53,19 @@ export default {
     
   },
   gotoMain(store){
-    console.log("gotoMain")
+    
     store.commit("setCurComponent",mainPage)
-  },
-  testToken(store){
-    console.log("a")
+  }, 
+  testToken(store){ 
+    
     return loginAPI.testToken();
-  }
+  },  
+  async getRefreshToken(store){
+    let response = await loginAPI.getRefreshedToken(store.state.auth.refreshToken);
+    console.log(response)
+    store.state.auth.access_token = response.data.access_token;
+    setToken(store,response.data.access_token);
+    return response.data.access_token;
+  },
+  setRefreshToken
 } 

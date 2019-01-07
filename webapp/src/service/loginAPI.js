@@ -10,6 +10,7 @@ function updateToken(token){
   axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
   //config['Authorization'] ='Bearer '+ token;
 }
+
 const getUserInfo = (uid, password) => {
   return axios.post(backEnd+'JWT/api/login', {
       'username': uid,
@@ -18,13 +19,22 @@ const getUserInfo = (uid, password) => {
 }
 const testToken = ()=>{
   return axios.get(backEnd+'Secure/api/hello');
-}
+} 
 const isFinished = uid => {
-  return axios.get(backEnd+'api/test',{ 
+  return axios.get(backEnd+'api/test',{
     params:{
       'uid': uid
   }})
 }
+const getRefreshedToken =(refreshToken)=>{
+  let header = {
+    'headers':{
+      'Authorization': 'Bearer ' + refreshToken
+    }
+  }
+  return axios.get(backEnd+'JWT/api/refresh',header)
+}
+
 
 export default {
   async login (uid, password) {
@@ -43,5 +53,6 @@ export default {
     }
   },
   updateToken,
-  testToken
+  testToken,
+  getRefreshedToken
 }

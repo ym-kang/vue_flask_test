@@ -6,12 +6,22 @@
         <div>
             token: <br>
             <p>{{this.$store.state.auth.accessToken}}</p>
+            refresh: <br>
+            <p>{{this.$store.state.auth.refreshToken}}</p>
         </div>
         
         <button v-on:click="onclick">increase</button>
         <div>
             <b-button varient="primary" @click="testTokenUI">test token</b-button>
             <p>{{response}}</p>
+        </div>
+        <div>
+            <b-button @click="refreshTok">refresh-tok</b-button>
+            <p>{{refreshBody}}</p>
+        </div>
+        <div>
+            <p>token info</p>
+            <p>{{getTokenDecoded}}</p>
         </div>
     </div>
     
@@ -25,18 +35,26 @@ export default {
     data(){
         return {
             abc:1,
-            response:"none"
+            response:"none",
+            refreshBody:"none"
         }
     },
-    methods:{
-        ...mapActions(['testToken']),
-        onclick(event){ 
+    methods:{ 
+        ...mapActions(['testToken','getRefreshToken']),
+        onclick(event){
             this.abc++;
         },
         testTokenUI(event){
             console.log(1)
             this.testToken().then((data)=>this.response = data);
         },
+        refreshTok(event){ 
+            this.getRefreshToken().then((data)=>this.refreshBody=data);
+        }
+
+    },
+    computed:{
+        ...mapGetters(['getTokenDecoded']),
 
     }
 
