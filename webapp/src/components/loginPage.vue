@@ -9,11 +9,10 @@
       <div class="form-group">
         <input class="form-control" type="password" placeholder="Enter your password" v-model="password">
       </div>
-      
-      <b-button class="btn" variant="primary" type="submit">Login</b-button>
-      
-      
-    </form>
+        
+      <b-btn variant="primary btn-round" type="submit">Login</b-btn>
+
+    </form> 
   </div>
 </template>
 
