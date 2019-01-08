@@ -7,14 +7,21 @@ import store from './vuex/store'
 import 'bootstrap' 
 import 'bootstrap/dist/css/bootstrap.css'
 import BootstrapVue from 'bootstrap-vue'
+//import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
+import PulseLoader from '@/components/PulseLoader.vue'
+
 Vue.use(BootstrapVue)
 Vue.config.productionTip = false
+Vue.component('pulse-loader',PulseLoader)
 
 /* eslint-disable no-new */
-new Vue({
+let vm = new Vue({
   el: '#app',
  // router,
-  components: { App },
+  components: { 
+    App
+  },
   template: '<App/>',
   store
 })
+

@@ -10,8 +10,8 @@
         <input class="form-control" type="password" placeholder="Enter your password" v-model="password">
       </div>
         
-      <b-btn variant="primary btn-round" type="submit">Login</b-btn>
-
+      <b-btn v-if="!loading" variant="primary btn-round" type="submit">Login</b-btn>
+      <pulse-loader :loading="loading" ></pulse-loader>
     </form> 
   </div>
 </template>
@@ -25,33 +25,42 @@ export default {
     return {
       msg: 'Welcome to Your Vue.js App',
       uid: '',
-      password: ''
+      password: '',
+      loading: false
     }
   },
   methods: {
     ...mapActions(['login','gotoMain']),
       onSubmit () {
-      try { 
-        let loginResult;
-        let ret = this.login({uid: this.uid, password: this.password})
-        setTimeout(() => {
+        this.loading = true;
+
+        try { 
+          let loginResult;
+          let ret = this.login({uid: this.uid, password: this.password})
           
-        }, 1000);
-        ret.then((val)=>{
-            loginResult = val;
-            console.log("rval:"+loginResult) // 로그인 성공하면 true, 아니면 false
-            if(!loginResult){//login failure
-              alert("login fail") 
-            }else{
-           // alert("login success") 
-            this.gotoMain();
+          function handle_result(){
+          ret.then((val)=>{
+              loginResult = val;
+              console.log("rval:"+loginResult) // 로그인 성공하면 true, 아니면 false
+              if(!loginResult){//login failure
+                alert("login fail") 
+              }else{
+            // alert("login success") 
+              this.gotoMain();
+            }
+            });
           }
-          });
-        this.password = "";
-        
-      } catch (err) {
-        console.error(err)
-      }
+          setTimeout(() => {
+            this.loading = false;
+            handle_result();
+          }, 1000);
+          
+
+          this.password = "";
+          
+        } catch (err) {
+          console.error(err)
+        }
     }
   }
 }

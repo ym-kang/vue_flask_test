@@ -5,6 +5,7 @@
 
     
     <component :is=" this.$store.state.currentComponent"></component>
+
   </div>
 </template>
 
